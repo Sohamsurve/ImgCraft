@@ -24,8 +24,10 @@ router.route('/').post(async (req, res) => {
       return res.status(400).json({ success: false, message: 'Prompt is required' });
     }
 
+    const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1';
+
     const aiResponse = await openai.createImage({
-      model: 'dall-e-2',
+      model,
       prompt,
       n: 1,
       size: '1024x1024',
