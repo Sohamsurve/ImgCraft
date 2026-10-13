@@ -43,6 +43,10 @@ const CreatePost = () => {
           );
         }
 
+        if (!result.photo) {
+          throw new Error(result.message || 'No image data was returned by the server.');
+        }
+
         setForm((prev) => ({
           ...prev,
           photo: `data:image/jpeg;base64,${result.photo}`,
