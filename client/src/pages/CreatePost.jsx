@@ -27,10 +27,28 @@ const CreatePost = () => {
           body: JSON.stringify({ prompt: form.prompt }),
         });
 
-        const data = await response.json();
-        setForm({...form, photo: `data:image/jpeg;base64,${data.photo}`})
+        const text = await response.text();
+        let result;
+
+        try {
+          result = text ? JSON.parse(text) : {};
+        } catch {
+          console.error('Backend returned non-JSON:', text);
+          throw new Error(`Backend error (${response.status}): ${text}`);
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            result.message || result.error || `Request failed: ${response.status}`
+          );
+        }
+
+        setForm((prev) => ({
+          ...prev,
+          photo: `data:image/jpeg;base64,${result.photo}`,
+        }));
       }catch(error) {
-        alert(error);
+        alert(error.message || error);
       } finally{
         setGeneratingImg(false);
       }

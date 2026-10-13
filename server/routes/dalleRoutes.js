@@ -20,6 +20,10 @@ router.route('/').post(async (req, res) => {
   try {
     const { prompt } = req.body;
 
+    if (!prompt || !prompt.trim()) {
+      return res.status(400).json({ success: false, message: 'Prompt is required' });
+    }
+
     const aiResponse = await openai.createImage({
       prompt,
       n: 1,
@@ -28,10 +32,13 @@ router.route('/').post(async (req, res) => {
     });
 
     const image = aiResponse.data.data[0].b64_json;
-    res.status(200).json({ photo: image });
+    res.status(200).json({ success: true, photo: image });
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error?.response.data.error.message || 'Something went wrong');
+    console.error('DALL-E error:', error?.response?.data || error);
+    res.status(500).json({
+      success: false,
+      message: error?.response?.data?.error?.message || error?.message || 'Something went wrong',
+    });
   }
 });
 

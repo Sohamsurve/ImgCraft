@@ -34,13 +34,13 @@ router.route('/').post(async (req, res) => {
         const newPost = await Post.create({
             name,
             prompt,
-            photo: photoUrl.url,
+            photo: photoUrl.secure_url || photoUrl.url,
 
         })
 
         res.status(201).json({success: true, data: newPost})
     } catch (error) {
-        res.status(500).json({success: false, message: error})
+        res.status(500).json({success: false, message: error.message || error})
     }
 });
 
