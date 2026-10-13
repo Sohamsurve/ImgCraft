@@ -29,10 +29,18 @@ router.route('/').post(async (req, res) => {
       prompt,
       n: 1,
       size: '1024x1024',
-      response_format: 'b64_json',
     });
 
-    const image = aiResponse.data.data[0].b64_json;
+    const imagePayload = aiResponse.data?.data?.[0];
+    const image = imagePayload?.b64_json || imagePayload?.url;
+
+    if (!image) {
+      return res.status(500).json({
+        success: false,
+        message: 'No image was returned by the OpenAI API.',
+      });
+    }
+
     res.status(200).json({ success: true, photo: image });
   } catch (error) {
     console.error('DALL-E error:', error?.response?.data || error);

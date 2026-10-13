@@ -47,9 +47,13 @@ const CreatePost = () => {
           throw new Error(result.message || 'No image data was returned by the server.');
         }
 
+        const nextPhoto = result.photo.startsWith('http')
+          ? result.photo
+          : `data:image/jpeg;base64,${result.photo}`;
+
         setForm((prev) => ({
           ...prev,
-          photo: `data:image/jpeg;base64,${result.photo}`,
+          photo: nextPhoto,
         }));
       }catch(error) {
         alert(error.message || error);
